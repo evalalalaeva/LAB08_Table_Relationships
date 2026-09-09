@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Shop - Lab 8</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="app-header">
+    <h1>🛍️ Product Shop</h1>
+    <p>Lab 8: Table Relationships &middot; CP353002 Principles of Software Design</p>
+</header>
+
+<div class="container">
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2 style="margin:0;">All Products</h2>
+            <a class="btn btn-success" th:href="@{/products/add}">+ Add Product</a>
+        </div>
+
+        <table th:if="${!products.isEmpty()}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Warranty</th>
+                <th>Reviews</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}"></td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.category}"></td>
+                <td th:text="${product.brand}"></td>
+                <td th:text="${product.stock}"></td>
+                <td>
+                    <span th:if="${product.discountType != null and product.discountType != 'NONE'}"
+                          class="price-original"
+                          th:text="${'$' + #numbers.formatDecimal(product.price, 1, 2)}"></span>
+                    <span class="price-final"
+                          th:text="${'$' + #numbers.formatDecimal(finalPrices.get(product.id), 1, 2)}"></span>
+                    <br/>
+                    <span th:if="${product.discountType == 'MEMBER'}" class="badge badge-member">Member -10%</span>
+                    <span th:if="${product.discountType == 'SEASONAL'}" class="badge badge-seasonal">Seasonal -20%</span>
+                </td>
+                <td th:text="${product.detail != null ? product.detail.warranty : '-'}"></td>
+                <td th:text="${product.reviews != null ? product.reviews.size() : 0}"></td>
+                <td class="actions">
+                    <a class="btn btn-primary" th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
+                    <a class="btn btn-danger" th:href="@{/products/delete/{id}(id=${product.id})}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${products.isEmpty()}" class="empty-state">
+            <p>No products yet. Click "Add Product" to create your first one.</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
